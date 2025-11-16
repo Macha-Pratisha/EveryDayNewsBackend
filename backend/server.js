@@ -101,7 +101,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(uploadDir));
 
 // ------------------ Dev / Production Handling ------------------
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production" || process.env.NODE_ENV !== "development" ) {
   // Dev: enable CORS for local frontend ports
   app.use(cors({
     origin: [
