@@ -159,17 +159,6 @@ const frontends = [
   { route: "/delivery", dir: "../Delivery-Portal/dist" }
 ];
 
-frontends.forEach(({ route, dir }) => {
-  const distPath = path.join(__dirname, dir);
-  if (fs.existsSync(distPath)) {
-    app.use(route, express.static(distPath));
-    app.get(new RegExp(`^${route}(/.*)?$`), (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
-    console.log(`📂 Serving ${route} frontend from ${distPath}`);
-  }
-});
-
 // ------------------ API Routes ------------------
 app.use("/api/manager", managerRoutes);
 app.use("/api/customer", customerRoutes);
@@ -183,6 +172,18 @@ app.use("/api/notes", noteRoutes);
 
 // ------------------ Optional Health Check ------------------
 app.get("/api/health", (req, res) => res.json({ status: "ok", timestamp: Date.now() }));
+
+frontends.forEach(({ route, dir }) => {
+  const distPath = path.join(__dirname, dir);
+  if (fs.existsSync(distPath)) {
+    app.use(route, express.static(distPath));
+    app.get(new RegExp(`^${route}(/.*)?$`), (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
+    });
+    console.log(`📂 Serving ${route} frontend from ${distPath}`);
+  }
+});
+
 
 // ------------------ MongoDB Connection ------------------
 mongoose.connect(process.env.MONGO_URI)
