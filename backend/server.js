@@ -210,18 +210,15 @@ app.use(cors({
   credentials: true,
 }));
 
-// ------------------ Production Frontend ------------------
+// Production Frontend
 if (process.env.NODE_ENV === "production") {
 
-  // Only MAIN frontend is served by backend
   app.use(express.static(path.join(__dirname, "../main-frontend/dist")));
-  app.get("*", (req, res) => {
+  app.get("/*", (req, res) => {
     res.sendFile(path.join(__dirname, "../main-frontend/dist/index.html"));
   });
-
-  // ❌ Do NOT serve Manager/Customer/Delivery from backend
-  // They are deployed on Vercel
 }
+
 
 // ------------------ API Routes ------------------
 app.use("/api/manager", managerRoutes);
