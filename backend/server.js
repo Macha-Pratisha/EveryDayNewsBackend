@@ -199,26 +199,12 @@ const allowedOrigins = [
   "http://localhost:8082",
   "http://localhost:5173",
 
-  // ⭐ Your Vercel portals
   "https://managerportal.vercel.app",
   "https://customer-portal-black-gamma.vercel.app",
   "https://delivery-portal-iota.vercel.app",
 ];
 
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
-
-// Production Frontend
-if (process.env.NODE_ENV === "production") {
-
-  app.use(express.static(path.join(__dirname, "../main-frontend/dist")));
-  app.get("/*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../main-frontend/dist/index.html"));
-  });
-}
-
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 
 // ------------------ API Routes ------------------
 app.use("/api/manager", managerRoutes);
@@ -230,6 +216,15 @@ app.use("/api/customer/subscriptions", customerSubscriptionRoutes);
 app.use("/api/manager/notifications", managerNotificationRoutes);
 app.use("/api/customer/bills", billRoutes);
 app.use("/api/notes", noteRoutes);
+
+// ------------------ FRONTEND (PRODUCTION) ------------------
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../main-frontend/dist")));
+
+  app.get("/*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../main-frontend/dist/index.html"));
+  });
+}
 
 // ------------------ MongoDB Connection ------------------
 mongoose.connect(process.env.MONGO_URI)
