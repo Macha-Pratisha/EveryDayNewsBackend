@@ -160,7 +160,6 @@
 // // ------------------ Start Server ------------------
 // const PORT = process.env.PORT || 5000;
 // app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
@@ -168,7 +167,6 @@ import cors from "cors";
 import fs from "fs";
 import path from "path";
 
-// Import routes
 import managerRoutes from "./routes/managerRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
 import deliveryRoutes from "./routes/deliveryRoutes.js";
@@ -180,33 +178,33 @@ import billRoutes from "./routes/billRoutes.js";
 import noteRoutes from "./routes/noteRoutes.js";
 
 dotenv.config();
+
 const app = express();
 const __dirname = path.resolve();
 
-// ------------------ Uploads ------------------
+// Uploads folder
 const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
-// ------------------ Middleware ------------------
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(uploadDir));
 
-// ------------------ CORS ------------------
+// CORS
 const allowedOrigins = [
   "http://localhost:8080",
   "http://localhost:8081",
   "http://localhost:8082",
   "http://localhost:5173",
-
   "https://managerportal.vercel.app",
   "https://customer-portal-black-gamma.vercel.app",
-  "https://delivery-portal-iota.vercel.app",
+  "https://delivery-portal-iota.vercel.app"
 ];
 
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 
-// ------------------ API Routes ------------------
+// API routes
 app.use("/api/manager", managerRoutes);
 app.use("/api/customer", customerRoutes);
 app.use("/api/delivery", deliveryRoutes);
@@ -217,7 +215,7 @@ app.use("/api/manager/notifications", managerNotificationRoutes);
 app.use("/api/customer/bills", billRoutes);
 app.use("/api/notes", noteRoutes);
 
-// ------------------ FRONTEND (PRODUCTION) ------------------
+// Serve main-frontend (Render production)
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../main-frontend/dist")));
 
@@ -226,11 +224,11 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// ------------------ MongoDB Connection ------------------
+// Start DB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.error("❌ MongoDB Error:", err));
 
-// ------------------ Start Server ------------------
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
